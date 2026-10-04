@@ -1,0 +1,264 @@
+@startuml
+' Library monolith — class diagram
+' Layered: controller -> service -> dao -> model (persistence via ORMLite)
+
+skin rose
+' left to right direction
+
+skinparam package<<controller>> {
+  BackgroundColor #FCE4EC
+  BorderColor #D81B60
+}
+skinparam package<<service>> {
+  BackgroundColor #E3F2FD
+  BorderColor #1976D2
+}
+skinparam package<<dao>> {
+  BackgroundColor #E8F5E9
+  BorderColor #388E3C
+}
+skinparam package<<model>> {
+  BackgroundColor #FFF8E1
+  BorderColor #F9A825
+}
+skinparam package<<db>> {
+  BackgroundColor #F3E5F5
+  BorderColor #7B1FA2
+}
+hide stereotype
+
+package "controller" <<controller>> {
+  class BookController {
+    - BookService service
+    + register(JavalinConfig) : void
+  }
+
+  class LoanController {
+    - MemberService memberService
+    - LoanService loanService
+    + register(JavalinConfig) : void
+  }
+
+  class MemberController {
+    - MemberService service
+    + register(JavalinConfig) : void
+  }
+
+  class ReservationController {
+    - ReservationService service
+    + register(JavalinConfig) : void
+  }
+}
+
+package "service" <<service>> {
+  class BookService {
+    - BookDao dao
+    + listAll() : List<Book>
+    + findById(int) : Book
+    + create(Book) : Book
+    + borrow(int) : void
+    + returnCopy(int) : void
+  }
+
+  class LoanService {
+    - LoanDao loanDao
+    - BookDao bookDao
+    + findAll() : List<Loan>
+    + returnLoan(int) : Loan
+    + overdueLoans() : List<Loan>
+  }
+
+  class MemberService {
+    - MemberDao memberDao
+    - BookDao bookDao
+    - LoanDao loanDao
+    + register(Member) : Member
+    + findAll() : List<Member>
+    + checkout(int, int) : Loan
+  }
+
+  class ReservationService {
+    - ReservationDao reservationDao
+    - BookDao bookDao
+    - MemberDao memberDao
+    - LoanDao loanDao
+    + reserve(int, int) : Reservation
+    + findAll() : List<Reservation>
+    + fulfill(int) : Loan
+  }
+
+  class LoanPolicy {
+    - {static} int DUE_DAYS = 21
+    - {static} double FEE_PER_DAY = 1.0
+    + {static} dueDate(LocalDate) : LocalDate
+  }
+
+  class NotFoundException {
+  }
+}
+
+package "dao" <<dao>> {
+  class BookDao {
+  }
+
+  class MemberDao {
+  }
+
+  class LoanDao {
+  }
+
+  class ReservationDao {
+  }
+
+  abstract class BaseDao<T> {
+    # Dao<T, Integer> dao
+    + findAll() : List<T>
+    + findById(int) : T
+    + create(T) : void
+    + update(T) : void
+    + delete(T) : void
+    + transaction(Callable<R>) : R
+  }
+}
+
+package "model" <<model>> {
+  class Book {
+    - int id
+    - String title
+    - String author
+    - String isbn
+    - int totalCopies
+    - int availableCopies
+    + Book()
+    + Book(String, String, String, int)
+    + getId() : int
+    + setId(int) : void
+    + getTitle() : String
+    + setTitle(String) : void
+    + getAuthor() : String
+    + setAuthor(String) : void
+    + getIsbn() : String
+    + setIsbn(String) : void
+    + getTotalCopies() : int
+    + setTotalCopies(int) : void
+    + getAvailableCopies() : int
+    + setAvailableCopies(int) : void
+  }
+
+  class Member {
+    - int id
+    - String name
+    - String email
+    + Member()
+    + Member(String, String)
+    + getId() : int
+    + setId(int) : void
+    + getName() : String
+    + setName(String) : void
+    + getEmail() : String
+    + setEmail(String) : void
+  }
+
+  class Loan {
+    - int id
+    - Member member
+    - Book book
+    - LocalDate loanDate
+    - LocalDate dueDate
+    - LocalDate returnDate
+    - boolean returned
+    - double overdueFee
+    + Loan()
+    + Loan(Member, Book, LocalDate, LocalDate)
+    + getId() : int
+    + setId(int) : void
+    + getMember() : Member
+    + setMember(Member) : void
+    + getBook() : Book
+    + setBook(Book) : void
+    + getLoanDate() : LocalDate
+    + setLoanDate(LocalDate) : void
+    + getDueDate() : LocalDate
+    + setDueDate(LocalDate) : void
+    + getReturnDate() : LocalDate
+    + setReturnDate(LocalDate) : void
+    + isReturned() : boolean
+    + setReturned(boolean) : void
+    + getOverdueFee() : double
+    + setOverdueFee(double) : void
+  }
+
+  class Reservation {
+    - int id
+    - Member member
+    - Book book
+    - LocalDate reservedAt
+    - boolean fulfilled
+    + Reservation()
+    + Reservation(Member, Book, LocalDate)
+    + getId() : int
+    + setId(int) : void
+    + getMember() : Member
+    + setMember(Member) : void
+    + getBook() : Book
+    + setBook(Book) : void
+    + getReservedAt() : LocalDate
+    + setReservedAt(LocalDate) : void
+    + isFulfilled() : boolean
+    + setFulfilled(boolean) : void
+  }
+}
+
+package "db" <<db>> {
+  class LocalDatePersister {
+  }
+  class Database {
+    - ConnectionSource connectionSource
+    + connectionSource() : ConnectionSource
+    + seedIfEmpty() : void
+  }
+}
+
+' ----- controller -> service -----
+BookController "1" --> "1" BookService
+LoanController "1" --> "1" MemberService
+LoanController "1" --> "1" LoanService
+MemberController "1" --> "1" MemberService
+ReservationController "1" --> "1" ReservationService
+
+' ----- service -> dao -----
+BookService "1" --> "1" BookDao
+LoanPolicy ..> Loan
+NotFoundException ..> LoanService
+LoanService "1" --> "1" LoanDao
+LoanService "1" --> "1" BookDao
+MemberService "1" --> "1" MemberDao
+MemberService "1" --> "1" BookDao
+MemberService "1" --> "1" LoanDao
+ReservationService "1" --> "1" ReservationDao
+ReservationService "1" --> "1" BookDao
+ReservationService "1" --> "1" MemberDao
+ReservationService "1" --> "1" LoanDao
+
+' ----- dao -> model / db -----
+BookDao "1" --> "0..*" Book
+MemberDao "1" --> "0..*" Member
+LoanDao "1" --> "0..*" Loan
+ReservationDao "1" --> "0..*" Reservation
+BookDao -|> BaseDao
+MemberDao -|> BaseDao
+LoanDao -|> BaseDao
+ReservationDao -|> BaseDao
+LocalDatePersister ..> LocalDate
+BookDao "1" ..> "1" Database
+MemberDao "1" ..> "1" Database
+LoanDao "1" ..> "1" Database
+ReservationDao "1" ..> "1" Database
+
+' ----- model relationships -----
+Loan "0..*" --> "1" Member
+Loan "0..*" --> "1" Book
+Reservation "0..*" --> "1" Member
+Reservation "0..*" --> "1" Book
+
+@enduml

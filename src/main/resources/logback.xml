@@ -1,0 +1,15 @@
+<!--
+    Copyright (c) 2026. Arquitectura de Sistemas, DISC, UCN, Antofagasta.
+-->
+<configuration>
+    <logger name="cl.ucn.disc" level="DEBUG"/>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) %cyan(%logger{36}) - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+</configuration>
