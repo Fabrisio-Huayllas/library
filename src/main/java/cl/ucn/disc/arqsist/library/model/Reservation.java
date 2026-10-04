@@ -1,0 +1,79 @@
+/*
+ * Copyright (c) 2026. Arquitectura de Sistemas, DISC, UCN, Antofagasta.
+ */
+package cl.ucn.disc.arqsist.library.model;
+
+import cl.ucn.disc.arqsist.library.db.LocalDatePersister;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
+
+import java.time.LocalDate;
+
+@DatabaseTable(tableName = "reservations")
+public final class Reservation {
+
+    @DatabaseField(generatedId = true)
+    private int id;
+
+    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
+    private Member member;
+
+    @DatabaseField(canBeNull = false, foreign = true, foreignAutoRefresh = true)
+    private Book book;
+
+    @DatabaseField(canBeNull = false, persisterClass = LocalDatePersister.class)
+    private LocalDate reservedAt;
+
+    @DatabaseField
+    private boolean fulfilled;
+
+    public Reservation() {
+    }
+
+    public Reservation(Member member, Book book, LocalDate reservedAt) {
+        this.member = member;
+        this.book = book;
+        this.reservedAt = reservedAt;
+        this.fulfilled = false;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Member getMember() {
+        return member;
+    }
+
+    public void setMember(Member member) {
+        this.member = member;
+    }
+
+    public Book getBook() {
+        return book;
+    }
+
+    public void setBook(Book book) {
+        this.book = book;
+    }
+
+    public LocalDate getReservedAt() {
+        return reservedAt;
+    }
+
+    public void setReservedAt(LocalDate reservedAt) {
+        this.reservedAt = reservedAt;
+    }
+
+    public boolean isFulfilled() {
+        return fulfilled;
+    }
+
+    public void setFulfilled(boolean fulfilled) {
+        this.fulfilled = fulfilled;
+    }
+}
