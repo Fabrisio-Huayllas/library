@@ -1,0 +1,64 @@
+/*
+ * Copyright (c) 2026. Arquitectura de Sistemas, DISC, UCN, Antofagasta.
+ */
+package cl.ucn.disc.arqsist.library.service;
+
+import cl.ucn.disc.arqsist.library.dao.BookDao;
+import cl.ucn.disc.arqsist.library.dao.LoanDao;
+import cl.ucn.disc.arqsist.library.dao.MemberDao;
+import cl.ucn.disc.arqsist.library.dao.ReservationDao;
+import cl.ucn.disc.arqsist.library.model.Book;
+import cl.ucn.disc.arqsist.library.model.Loan;
+import cl.ucn.disc.arqsist.library.model.Member;
+import cl.ucn.disc.arqsist.library.model.Reservation;
+
+import java.time.LocalDate;
+import java.util.List;
+
+public final class ReservationService {
+
+    private final ReservationDao reservationDao;
+    private final BookDao bookDao;
+    private final MemberDao memberDao;
+    private final LoanDao loanDao;
+
+    public ReservationService(ReservationDao reservationDao, BookDao bookDao, MemberDao memberDao, LoanDao loanDao) {
+        this.reservationDao = reservationDao;
+        this.bookDao = bookDao;
+        this.memberDao = memberDao;
+        this.loanDao = loanDao;
+    }
+
+    public Reservation reserve(int bookId, int memberId) {
+        Book book = bookDao.findById(bookId);
+        Member member = memberDao.findById(memberId);
+        if (book == null) {
+            throw new NotFoundException("Book not found: " + bookId);
+        }
+        if (member == null) {
+            throw new NotFoundException("Member not found: " + memberId);
+        }
+        Reservation reservation = new Reservation(member, book, LocalDate.now());
+        reservationDao.create(reservation);
+        return reservation;
+    }
+
+    public List<Reservation> findAll() {
+        return reservationDao.findAll();
+    }
+
+    public Loan fulfill(int reservationId) {
+        Reservation reservation = reservationDao.findById(reservationId);
+        if (reservation == null || reservation.isFulfilled()) {
+            throw new IllegalStateException("Reservation not available");
+        }
+
+        reservation.setFulfilled(true);
+        reservationDao.update(reservation);
+
+        LocalDate today = LocalDate.now();
+        Loan loan = new Loan(reservation.getMember(), reservation.getBook(), today, LoanPolicy.dueDate(today));
+        loanDao.create(loan);
+        return loan;
+    }
+}
