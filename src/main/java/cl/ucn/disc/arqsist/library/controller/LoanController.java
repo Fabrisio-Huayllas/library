@@ -9,16 +9,31 @@ import io.javalin.config.JavalinConfig;
 
 import java.util.Objects;
 
+/** HTTP controller for loan routes. */
 public final class LoanController {
 
+    /** Member service. */
     private final MemberService memberService;
+
+    /** Loan service. */
     private final LoanService loanService;
 
+    /**
+     * Creates a new LoanController.
+     *
+     * @param memberService the member service
+     * @param loanService the loan service
+     */
     public LoanController(MemberService memberService, LoanService loanService) {
         this.memberService = memberService;
         this.loanService = loanService;
     }
 
+    /**
+     * Registers loan HTTP routes in Javalin.
+     *
+     * @param config the Javalin config
+     */
     public void register(JavalinConfig config) {
         config.routes.post("/loans", ctx -> {
             int memberId = Integer.parseInt(Objects.requireNonNull(ctx.queryParam("memberId")));

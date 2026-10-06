@@ -16,9 +16,13 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+/** Verifies that a failed checkout transaction does not leave corrupted inventory state. */
 class TransactionBugTest {
 
+    /** DAO for books. */
     private BookDao bookDao;
+
+    /** Member service under test. */
     private MemberService memberService;
 
     @BeforeEach

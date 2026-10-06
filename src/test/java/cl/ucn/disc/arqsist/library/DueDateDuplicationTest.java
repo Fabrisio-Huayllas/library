@@ -19,11 +19,19 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/** Verifies that checkout and reservation fulfill produce the same due date. */
 class DueDateDuplicationTest {
 
+    /** Member service under test. */
     private MemberService memberService;
+
+    /** Reservation service under test. */
     private ReservationService reservationService;
+
+    /** Test book instance. */
     private Book book;
+
+    /** Test member instance. */
     private Member member;
 
     @BeforeEach

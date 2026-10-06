@@ -19,8 +19,15 @@ import cl.ucn.disc.arqsist.library.service.ReservationService;
 import io.javalin.Javalin;
 import io.javalin.http.staticfiles.Location;
 
+/** Main entry point for the library application. */
 public final class App {
 
+    /**
+     * Bootstraps the application, initialises DAOs, services, controllers, and starts Javalin.
+     *
+     * @param args command line arguments
+     * @throws Exception if application initialization fails
+     */
     public static void main(String[] args) throws Exception {
         Database db = new Database("jdbc:sqlite:database.sqlite");
         db.seedIfEmpty();

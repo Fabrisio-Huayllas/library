@@ -21,10 +21,13 @@ public abstract class BaseDao<T> {
     /** Creates a DAO for the specified entity type.
      * @param connectionSource database connection source
      * @param entityClass entity class
-     * @throws SQLException if ORMLite cannot create the DAO
      */
-    protected BaseDao(ConnectionSource connectionSource, Class<T> entityClass) throws SQLException {
-        this.dao = DaoManager.createDao(connectionSource, entityClass);
+    protected BaseDao(ConnectionSource connectionSource, Class<T> entityClass) {
+        try {
+            this.dao = DaoManager.createDao(connectionSource, entityClass);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /** Finds all entities.

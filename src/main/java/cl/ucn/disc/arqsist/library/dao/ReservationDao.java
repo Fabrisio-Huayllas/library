@@ -6,10 +6,15 @@ package cl.ucn.disc.arqsist.library.dao;
 import cl.ucn.disc.arqsist.library.model.Reservation;
 import com.j256.ormlite.support.ConnectionSource;
 
-import java.sql.SQLException;
+/** DAO for Reservation entities. */
 public final class ReservationDao extends BaseDao<Reservation> {
 
-    public ReservationDao(ConnectionSource connectionSource) throws SQLException {
+    /**
+     * Creates a new ReservationDao.
+     *
+     * @param connectionSource the connection source to the database
+     */
+    public ReservationDao(ConnectionSource connectionSource) {
         super(connectionSource, Reservation.class);
     }
 }
