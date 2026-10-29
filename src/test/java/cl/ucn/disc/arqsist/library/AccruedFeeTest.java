@@ -56,3 +56,4 @@ class AccruedFeeTest {
         assertEquals(0.0, foundActive.getOverdueFee(), 0.001, "Active loan should have 0.0 fee");
     }
 }
+

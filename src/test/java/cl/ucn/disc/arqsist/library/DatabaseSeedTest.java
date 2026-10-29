@@ -61,3 +61,4 @@ class DatabaseSeedTest {
                 "Reservation count should not change after calling seedIfEmpty again");
     }
 }
+
