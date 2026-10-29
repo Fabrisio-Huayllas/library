@@ -2,4 +2,4 @@
 
 | Number | Model | Exact prompt text | Files changed |
 | --- | --- | --- | --- |
-| 1 | GitHub Copilot | No se ha desarrollado Stage 2 en esta entrega. | Ninguno |
+| 1 | Gemini 3.8 Flash | ahora haceme el storage 2 porfa, te paso de nuevo el pdf y lo que me piden: A partir del documento refactor.pdf y el código visto en clases: Desarrolle cada uno de los elementos del Stage 2 (sección 6.1 Part 2) del documento. La entrega debe ser un repositorio GitHub personal donde se vea el avance en el desarrollo del proyecto (no un sólo gran commit). El uso de IA está permitido y es recomendada su utilización, para ello se debe documentar tal como fue utilizada (El apéndice A indica la forma de hacerlo). El desarrollo es de caracter personal. | `service/MemberService.java`, `service/LoanService.java`, `service/ReservationService.java`, `controller/BookController.java`, `controller/LoanController.java`, `controller/ReservationController.java`, `App.java`, `DueDateDuplicationTest.java`, `TransactionBugTest.java`, `AccruedFeeTest.java`, `DatabaseSeedTest.java`, `docs/class-diagram.puml`, `docs/prompts-stage-2.md` |
